@@ -1,3 +1,5 @@
-Useful and commonly used kit methods.
+# gnfun
+
+Good and Nice Functions.
 
 ... 待补充 ...
