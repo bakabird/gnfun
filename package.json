@@ -1,6 +1,6 @@
 {
   "name": "gnfun",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "gnfun = Good and Nice Functions.",
   "main": "index.min.js",
   "scripts": {
@@ -13,7 +13,7 @@
   "homepage": "https://github.com/bakabird/rdd",
   "author": "bakabird",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-uglify": "^3.0.2"
