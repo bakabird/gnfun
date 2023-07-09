@@ -1,6 +1,6 @@
 {
   "name": "gnfun",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "gnfun = Good and Nice Functions.",
   "main": "gnfun.min.js",
   "types": "gnfun.d.ts",
