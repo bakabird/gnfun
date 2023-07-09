@@ -1,21 +1,24 @@
 {
   "name": "gnfun",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "gnfun = Good and Nice Functions.",
-  "main": "index.min.js",
+  "main": "gnfun.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -b && gulp pack"
+    "build": "gulp build"
   },
   "files": [
-    "index.min.js"
+    "gnfun.min.js",
+    "gnfun.d.ts"
   ],
   "homepage": "https://github.com/bakabird/rdd",
   "author": "bakabird",
   "license": "ISC",
   "devDependencies": {
+    "dts-bundle": "^0.7.3",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-uglify": "^3.0.2"
   }
 }
