@@ -1,8 +1,9 @@
 {
   "name": "gnfun",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "gnfun = Good and Nice Functions.",
   "main": "gnfun.min.js",
+  "types": "gnfun.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp build"
@@ -11,7 +12,11 @@
     "gnfun.min.js",
     "gnfun.d.ts"
   ],
-  "homepage": "https://github.com/bakabird/rdd",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bakabird/gnfun"
+  },
+  "homepage": "https://github.com/bakabird/gnfun",
   "author": "bakabird",
   "license": "ISC",
   "devDependencies": {
