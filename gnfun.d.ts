@@ -6,7 +6,7 @@ declare module 'gnfun' {
     import Shake2DModule from "gnfun/Module/Shake2DModule";
     import CountdownRunner from "gnfun/Runner/CountdownRunner";
     import RoundRunner from "gnfun/Runner/RoundRunner";
-    export { easyEncode, deepClone, remap, emptyString, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, toNumber, random, randomInt, randomIntArr, pick, pickWeights, pickWeightsBy, } from "gnfun/Util";
+    export { easyEncode, deepClone, remap, emptyString, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, toNumber, random, randomInt, randomIntArr, pick, pickWeights, pickWeightsBy, arrayFindIndexAll, arrayIncludes, arrayRemove, arrayRemoveAll, arrayRemoveFirst, } from "gnfun/Util";
     export { CountdownRunner };
     export { RoundRunner };
     export { Shake2DModule };
@@ -309,7 +309,12 @@ declare module 'gnfun/Util' {
             seed?: number;
             fieldName?: string;
     }): number;
-    export { easyEncode, deepClone, emptyString, remap, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, toNumber, random, randomInt, randomIntArr, pick, pickWeights, pickWeightsBy, };
+    function arrayRemove<T>(arr: Array<T>, item: T): T[];
+    function arrayRemoveFirst<T>(arr: Array<T>, match: (item: T) => boolean): T | null;
+    function arrayFindIndexAll<T>(arr: Array<T>, match: (item: T) => boolean): number[];
+    function arrayRemoveAll<T>(arr: Array<T>, match: (item: T) => boolean): T[];
+    function arrayIncludes<T>(arr: Array<T>, item: T): boolean;
+    export { easyEncode, deepClone, emptyString, remap, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, toNumber, random, randomInt, randomIntArr, pick, pickWeights, pickWeightsBy, arrayFindIndexAll, arrayIncludes, arrayRemove, arrayRemoveAll, arrayRemoveFirst, };
 }
 
 declare module 'gnfun/Collection/ILoopFunction' {

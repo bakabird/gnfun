@@ -25,6 +25,12 @@ export {
     pick,
     pickWeights,
     pickWeightsBy,
+
+    arrayFindIndexAll,
+    arrayIncludes,
+    arrayRemove,
+    arrayRemoveAll,
+    arrayRemoveFirst,
 } from "./Util"
 export { CountdownRunner };
 export { RoundRunner };

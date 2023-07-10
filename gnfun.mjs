@@ -674,6 +674,41 @@ function pickWeightsBy(arys, option) {
     }
     return rand_idx;
 }
+function arrayRemove(arr, item) {
+    var index = arr.indexOf(item);
+    if (index > -1) {
+        arr.splice(index, 1);
+    }
+    return arr;
+}
+function arrayRemoveFirst(arr, match) {
+    for (let index = 0; index < arr.length; index++) {
+        const element = arr[index];
+        if (match(element)) {
+            arr.splice(index, 1);
+            return element;
+        }
+    }
+    return null;
+}
+function arrayFindIndexAll(arr, match) {
+    return arr.reduce((pre, cur, idx) => {
+        if (match(cur))
+            pre.push(idx);
+        return pre;
+    }, []);
+}
+function arrayRemoveAll(arr, match) {
+    const thoseRemoved = [];
+    arrayFindIndexAll(arr, match).reverse().forEach((index) => {
+        thoseRemoved.push(arr[index]);
+        arr.splice(index, 1);
+    });
+    return thoseRemoved;
+}
+function arrayIncludes(arr, item) {
+    return arr.indexOf(item) > -1;
+}
 
 class Shake2DModule {
     constructor(magnitude, duration, speed, shaketype, RandomRange, onGetOriginal, onShake) {
@@ -834,4 +869,4 @@ class RoundRunner {
     }
 }
 
-export { CountdownRunner, FreeList, PoolModule, RoundRunner, Shake2DModule, className, deepClone, easyEncode, emptyString, enumKeys, enumValues, getEnumName, isNull, notNull, objectValues, pick, pickWeights, pickWeightsBy, random, randomInt, randomIntArr, remap, removeNullKeys, toNumber };
+export { CountdownRunner, FreeList, PoolModule, RoundRunner, Shake2DModule, arrayFindIndexAll, arrayIncludes, arrayRemove, arrayRemoveAll, arrayRemoveFirst, className, deepClone, easyEncode, emptyString, enumKeys, enumValues, getEnumName, isNull, notNull, objectValues, pick, pickWeights, pickWeightsBy, random, randomInt, randomIntArr, remap, removeNullKeys, toNumber };

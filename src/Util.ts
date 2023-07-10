@@ -292,6 +292,46 @@ function pickWeightsBy(arys: any[], option?: {
     return rand_idx;
 }
 
+
+function arrayRemove<T>(arr: Array<T>, item: T) {
+    var index = arr.indexOf(item)
+    if (index > -1) {
+        arr.splice(index, 1);
+    }
+    return arr;
+}
+
+function arrayRemoveFirst<T>(arr: Array<T>, match: (item: T) => boolean) {
+    for (let index = 0; index < arr.length; index++) {
+        const element = arr[index];
+        if (match(element)) {
+            arr.splice(index, 1);
+            return element;
+        }
+    }
+    return null;
+}
+
+function arrayFindIndexAll<T>(arr: Array<T>, match: (item: T) => boolean) {
+    return arr.reduce<Array<number>>((pre, cur, idx) => {
+        if (match(cur)) pre.push(idx);
+        return pre;
+    }, []);
+}
+
+function arrayRemoveAll<T>(arr: Array<T>, match: (item: T) => boolean) {
+    const thoseRemoved: Array<T> = [];
+    arrayFindIndexAll(arr, match).reverse().forEach((index) => {
+        thoseRemoved.push(arr[index]);
+        arr.splice(index, 1);
+    })
+    return thoseRemoved;
+}
+
+function arrayIncludes<T>(arr: Array<T>, item: T) {
+    return arr.indexOf(item) > -1;
+}
+
 export {
     easyEncode,
     deepClone,
@@ -314,4 +354,10 @@ export {
     pick,
     pickWeights,
     pickWeightsBy,
+
+    arrayFindIndexAll,
+    arrayIncludes,
+    arrayRemove,
+    arrayRemoveAll,
+    arrayRemoveFirst,
 }
