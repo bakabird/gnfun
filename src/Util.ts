@@ -186,6 +186,112 @@ function removeNullKeys<T>(obj: T): Partial<T> {
     return newObj;
 }
 
+
+/**
+ * 任何值转换为number值
+ * @param v 任何值，包括undefined和null
+ * @param defVal v无效（null或者undefined）的时候的默认值，不填表示NaN
+ * @return number
+ */
+function toNumber(v: any, defVal?: number): number | undefined {
+    if (isNull(v)) {
+        return isNull(defVal) ? NaN : defVal;
+    }
+    return Number(v);
+}
+
+
+// [0, 1)
+function _randomWithSeed(seed: number) {
+    seed = Math.pow(seed, 2) * 0.001;
+    return toNumber('0.' + Math.sin(seed).toString().slice(6))! * 0.9999;
+}
+
+/**
+ * 在给定范围内随机 [lowerBound, upperBound)，结果是个伪随机，受seed影响
+ * @param lowerBound 随机侧1
+ * @param upperBound 随机侧2
+ * @return 范围随机值
+ */
+function random(lowerBound: number, upperBound: number, seed?: number): number {
+    return lowerBound + (seed ? _randomWithSeed(seed) : Math.random()) * (upperBound - lowerBound);
+}
+
+function randomInt(lowerBound: number, upperBound: number, seed?: number): number {
+    return Math.floor(random(lowerBound, upperBound, seed));
+}
+
+function randomIntArr(low_up: number[], seed?: number) {
+    return randomInt(low_up[0], low_up[1], seed);
+}
+
+function pick<T>(arr: Array<T>, seed?: number): T {
+    return arr[randomInt(0, arr.length, seed)];
+}
+
+
+function pickWeights(weights: number[], seed?: number): number {
+    let total_weight = 0;
+    for (let weight of weights) {
+        total_weight += weight;
+    }
+    let rand = randomInt(0, total_weight, seed);
+    let acc_weight = 0;
+    let rand_idx = -1;
+    for (let i = 0; i < weights.length; i++) {
+        let weight = weights[i];
+        acc_weight += weight;
+        if (rand <= acc_weight) {
+            rand_idx = i;
+            break;
+        }
+    }
+    return rand_idx;
+}
+
+/**
+ * 在给定数组中按权重随机一个元素
+ * @param arys 数组
+ * @param option 可选
+ *   seed   伪随机种子
+ *   fieldName 代表权重的字段名，不填表示数组元素本身就是作为权重的number
+ * @return 随机到的数组元素索引，如果数组为空，返回-1
+ */
+function pickWeightsBy(arys: any[], option?: {
+    seed?: number,
+    fieldName?: string,
+}): number {
+    let seed = option && option.seed;
+    let fieldName = option && option.fieldName;
+    if (!arys || arys.length === 0) {
+        return -1;
+    }
+    if (isNull(fieldName)) {
+        return pickWeights(arys, seed);
+    }
+    fieldName = fieldName as string;
+    let total_weight = 0;
+    for (let e of arys) {
+        let w = e[fieldName];
+        if (isNull(w)) {
+            w = 1;
+        }
+        total_weight += w;
+    }
+    let rand = randomInt(0, total_weight, seed);
+    let acc_weight = 0;
+    let rand_idx = arys.length - 1;
+    for (let i = 0; i < arys.length; i++) {
+        let e = arys[i];
+        acc_weight += e[fieldName];
+        if (rand <= acc_weight) {
+            rand_idx = i;
+            break;
+        }
+    }
+    return rand_idx;
+}
+
 export {
     easyEncode,
     deepClone,
@@ -200,4 +306,12 @@ export {
     isNull,
     notNull,
     removeNullKeys,
+
+    toNumber,
+    random,
+    randomInt,
+    randomIntArr,
+    pick,
+    pickWeights,
+    pickWeightsBy,
 }

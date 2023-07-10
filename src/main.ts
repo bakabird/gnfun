@@ -1,5 +1,6 @@
 export { FreeList } from "./Collection/FreeList";
 export { PoolModule } from "./Module/PoolModule";
+import Shake2DModule from "./Module/Shake2DModule";
 import CountdownRunner from "./Runner/CountdownRunner";
 import RoundRunner from "./Runner/RoundRunner";
 export {
@@ -16,6 +17,15 @@ export {
     isNull,
     notNull,
     removeNullKeys,
+
+    toNumber,
+    random,
+    randomInt,
+    randomIntArr,
+    pick,
+    pickWeights,
+    pickWeightsBy,
 } from "./Util"
 export { CountdownRunner };
 export { RoundRunner };
+export { Shake2DModule };

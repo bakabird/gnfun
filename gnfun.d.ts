@@ -3,11 +3,13 @@
 declare module 'gnfun' {
     export { FreeList } from "gnfun/Collection/FreeList";
     export { PoolModule } from "gnfun/Module/PoolModule";
+    import Shake2DModule from "gnfun/Module/Shake2DModule";
     import CountdownRunner from "gnfun/Runner/CountdownRunner";
     import RoundRunner from "gnfun/Runner/RoundRunner";
-    export { easyEncode, deepClone, remap, emptyString, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, } from "gnfun/Util";
+    export { easyEncode, deepClone, remap, emptyString, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, toNumber, random, randomInt, randomIntArr, pick, pickWeights, pickWeightsBy, } from "gnfun/Util";
     export { CountdownRunner };
     export { RoundRunner };
+    export { Shake2DModule };
 }
 
 declare module 'gnfun/Collection/FreeList' {
@@ -206,6 +208,19 @@ declare module 'gnfun/Module/PoolModule' {
     }
 }
 
+declare module 'gnfun/Module/Shake2DModule' {
+    type Vec2 = {
+        x: number;
+        y: number;
+    };
+    export default class Shake2DModule {
+        constructor(magnitude: number, duration: number, speed: number, shaketype: "smooth" | "smoothCircle" | "smoothHalfCircle" | "perlinNoise" | "random", RandomRange: number, onGetOriginal: () => Vec2, onShake: (v2: Vec2) => void);
+        get ratio(): number;
+        set ratio(v: number);
+    }
+    export {};
+}
+
 declare module 'gnfun/Runner/CountdownRunner' {
     export default class CountdownRunner {
         get bindedCountdown(): () => void;
@@ -264,7 +279,37 @@ declare module 'gnfun/Util' {
         */
     function notNull(v: any): boolean;
     function removeNullKeys<T>(obj: T): Partial<T>;
-    export { easyEncode, deepClone, emptyString, remap, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, };
+    /**
+        * 任何值转换为number值
+        * @param v 任何值，包括undefined和null
+        * @param defVal v无效（null或者undefined）的时候的默认值，不填表示NaN
+        * @return number
+        */
+    function toNumber(v: any, defVal?: number): number | undefined;
+    /**
+        * 在给定范围内随机 [lowerBound, upperBound)，结果是个伪随机，受seed影响
+        * @param lowerBound 随机侧1
+        * @param upperBound 随机侧2
+        * @return 范围随机值
+        */
+    function random(lowerBound: number, upperBound: number, seed?: number): number;
+    function randomInt(lowerBound: number, upperBound: number, seed?: number): number;
+    function randomIntArr(low_up: number[], seed?: number): number;
+    function pick<T>(arr: Array<T>, seed?: number): T;
+    function pickWeights(weights: number[], seed?: number): number;
+    /**
+        * 在给定数组中按权重随机一个元素
+        * @param arys 数组
+        * @param option 可选
+        *   seed   伪随机种子
+        *   fieldName 代表权重的字段名，不填表示数组元素本身就是作为权重的number
+        * @return 随机到的数组元素索引，如果数组为空，返回-1
+        */
+    function pickWeightsBy(arys: any[], option?: {
+            seed?: number;
+            fieldName?: string;
+    }): number;
+    export { easyEncode, deepClone, emptyString, remap, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, toNumber, random, randomInt, randomIntArr, pick, pickWeights, pickWeightsBy, };
 }
 
 declare module 'gnfun/Collection/ILoopFunction' {

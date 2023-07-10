@@ -409,81 +409,6 @@ class PoolModule {
     }
 }
 
-class CountdownRunner {
-    get bindedCountdown() {
-        return this.countdown.bind(this);
-    }
-    constructor(_countdown, _run) {
-        this._countdown = _countdown;
-        this._run = _run;
-    }
-    countdown() {
-        var _a;
-        this._countdown -= 1;
-        if (this._countdown <= 0) {
-            (_a = this._run) === null || _a === void 0 ? void 0 : _a.call(this);
-            this._run = undefined;
-        }
-    }
-}
-
-class RoundRunner {
-    get over() {
-        return this._steps.length == 0;
-    }
-    constructor() {
-        this._steps = new FreeList();
-    }
-    append(step) {
-        this._steps.push(step);
-    }
-    reverse() {
-        this._steps.unsafeReverse();
-    }
-    runRound(roundNum) {
-        let count = 0;
-        let tmp;
-        this._steps.foreach_safe(() => {
-            count++;
-            // console.log(count)
-            // console.log(this._steps.length)
-            tmp = this._steps.shift();
-            tmp();
-            // console.log(this._steps.length)
-            return count < roundNum;
-        });
-    }
-    runAll() {
-        while (this._steps.length != 0) {
-            this._steps.shift()();
-        }
-    }
-    /**
-     * 生成一个执行体。
-     * @param roundNum 每一 Round 执行多少任务。roundNum < 1 时表示一次性全部执行完。
-     * @param onRest Round 结束后还有剩余任务时调用
-     * @param onEnd Round 结束后没有剩余任务时调用
-     * @returns
-     */
-    produceExecuteBody(roundNum, onRest, onEnd) {
-        const excuteBody = () => {
-            if (roundNum > 0) {
-                this.runRound(roundNum);
-            }
-            else {
-                this.runAll();
-            }
-            if (!this.over) {
-                onRest(excuteBody);
-            }
-            else {
-                onEnd(this);
-            }
-        };
-        return excuteBody;
-    }
-}
-
 const easyEncodeDist = {
     "a": "l",
     "b": "k",
@@ -657,5 +582,256 @@ function removeNullKeys(obj) {
     }
     return newObj;
 }
+/**
+ * 任何值转换为number值
+ * @param v 任何值，包括undefined和null
+ * @param defVal v无效（null或者undefined）的时候的默认值，不填表示NaN
+ * @return number
+ */
+function toNumber(v, defVal) {
+    if (isNull(v)) {
+        return isNull(defVal) ? NaN : defVal;
+    }
+    return Number(v);
+}
+// [0, 1)
+function _randomWithSeed(seed) {
+    seed = Math.pow(seed, 2) * 0.001;
+    return toNumber('0.' + Math.sin(seed).toString().slice(6)) * 0.9999;
+}
+/**
+ * 在给定范围内随机 [lowerBound, upperBound)，结果是个伪随机，受seed影响
+ * @param lowerBound 随机侧1
+ * @param upperBound 随机侧2
+ * @return 范围随机值
+ */
+function random(lowerBound, upperBound, seed) {
+    return lowerBound + (seed ? _randomWithSeed(seed) : Math.random()) * (upperBound - lowerBound);
+}
+function randomInt(lowerBound, upperBound, seed) {
+    return Math.floor(random(lowerBound, upperBound, seed));
+}
+function randomIntArr(low_up, seed) {
+    return randomInt(low_up[0], low_up[1], seed);
+}
+function pick(arr, seed) {
+    return arr[randomInt(0, arr.length, seed)];
+}
+function pickWeights(weights, seed) {
+    let total_weight = 0;
+    for (let weight of weights) {
+        total_weight += weight;
+    }
+    let rand = randomInt(0, total_weight, seed);
+    let acc_weight = 0;
+    let rand_idx = -1;
+    for (let i = 0; i < weights.length; i++) {
+        let weight = weights[i];
+        acc_weight += weight;
+        if (rand <= acc_weight) {
+            rand_idx = i;
+            break;
+        }
+    }
+    return rand_idx;
+}
+/**
+ * 在给定数组中按权重随机一个元素
+ * @param arys 数组
+ * @param option 可选
+ *   seed   伪随机种子
+ *   fieldName 代表权重的字段名，不填表示数组元素本身就是作为权重的number
+ * @return 随机到的数组元素索引，如果数组为空，返回-1
+ */
+function pickWeightsBy(arys, option) {
+    let seed = option && option.seed;
+    let fieldName = option && option.fieldName;
+    if (!arys || arys.length === 0) {
+        return -1;
+    }
+    if (isNull(fieldName)) {
+        return pickWeights(arys, seed);
+    }
+    fieldName = fieldName;
+    let total_weight = 0;
+    for (let e of arys) {
+        let w = e[fieldName];
+        if (isNull(w)) {
+            w = 1;
+        }
+        total_weight += w;
+    }
+    let rand = randomInt(0, total_weight, seed);
+    let acc_weight = 0;
+    let rand_idx = arys.length - 1;
+    for (let i = 0; i < arys.length; i++) {
+        let e = arys[i];
+        acc_weight += e[fieldName];
+        if (rand <= acc_weight) {
+            rand_idx = i;
+            break;
+        }
+    }
+    return rand_idx;
+}
 
-export { CountdownRunner, FreeList, PoolModule, RoundRunner, className, deepClone, easyEncode, emptyString, enumKeys, enumValues, getEnumName, isNull, notNull, objectValues, remap, removeNullKeys };
+class Shake2DModule {
+    constructor(magnitude, duration, speed, shaketype, RandomRange, onGetOriginal, onShake) {
+        this.magnitude = magnitude;
+        this.duration = duration;
+        this.speed = speed;
+        this.shaketype = shaketype;
+        this.RandomRange = RandomRange;
+        this.onGetOriginal = onGetOriginal;
+        this.onShake = onShake;
+        this._time = 0;
+        this._ratio = 0;
+        this._random1 = random(-this.RandomRange, this.RandomRange);
+        this._random2 = random(-this.RandomRange, this.RandomRange);
+    }
+    get ratio() {
+        return this._ratio;
+    }
+    set ratio(v) {
+        const time = v * this.duration;
+        if (time > this.duration)
+            return;
+        if (time < this._time)
+            return;
+        this._upt(time - this._time);
+        this._time = time;
+        this._ratio = v;
+    }
+    _upt(dt) {
+        var random1 = this._random1;
+        var random2 = this._random2;
+        // var random2 = UnityEngine.Random.Range(-RandomRange, RandomRange);
+        var original = this.onGetOriginal();
+        var magnitude = this.magnitude;
+        // while (elapsed < duration) {
+        //     elapsed += Time.deltaTime;
+        //     var percent = elapsed / duration;
+        //     var ps = percent * speed;
+        // }
+        this._time += dt;
+        var percent = this._time / this.duration;
+        var ps = percent * this.speed;
+        // map to [-1, 1]
+        var range1;
+        var range2;
+        switch (this.shaketype) {
+            case "smooth":
+                range1 = Math.sin(random1 + ps);
+                range2 = Math.cos(random2 + ps);
+                break;
+            case "smoothHalfCircle":
+                range1 = Math.sin(random1 + ps * Math.PI);
+                range2 = Math.cos(random2 + ps * Math.PI);
+                break;
+            case "smoothCircle":
+                range1 = Math.sin(random1 + ps * Math.PI * 2);
+                range2 = Math.cos(random2 + ps * Math.PI * 2);
+                break;
+            case "perlinNoise":
+                // not implement
+                range1 = Math.sin(random1 + ps);
+                range2 = Math.cos(random2 + ps);
+                break;
+            default:
+                range1 = random(-1, 1);
+                range2 = random(-1, 1);
+                break;
+        }
+        // reduce shake start from 50% duration
+        if (percent < 0.5) {
+            const v2 = { x: range1 * magnitude, y: range2 * magnitude };
+            v2.x += original.x;
+            v2.y += original.y;
+            this.onShake(v2);
+        }
+        else {
+            var magDecay = magnitude * (2 * (1 - percent));
+            const v2 = { x: range1 * magDecay, y: range2 * magDecay };
+            v2.x += original.x;
+            v2.y += original.y;
+            this.onShake(v2);
+        }
+    }
+}
+
+class CountdownRunner {
+    get bindedCountdown() {
+        return this.countdown.bind(this);
+    }
+    constructor(_countdown, _run) {
+        this._countdown = _countdown;
+        this._run = _run;
+    }
+    countdown() {
+        var _a;
+        this._countdown -= 1;
+        if (this._countdown <= 0) {
+            (_a = this._run) === null || _a === void 0 ? void 0 : _a.call(this);
+            this._run = undefined;
+        }
+    }
+}
+
+class RoundRunner {
+    get over() {
+        return this._steps.length == 0;
+    }
+    constructor() {
+        this._steps = new FreeList();
+    }
+    append(step) {
+        this._steps.push(step);
+    }
+    reverse() {
+        this._steps.unsafeReverse();
+    }
+    runRound(roundNum) {
+        let count = 0;
+        let tmp;
+        this._steps.foreach_safe(() => {
+            count++;
+            // console.log(count)
+            // console.log(this._steps.length)
+            tmp = this._steps.shift();
+            tmp();
+            // console.log(this._steps.length)
+            return count < roundNum;
+        });
+    }
+    runAll() {
+        while (this._steps.length != 0) {
+            this._steps.shift()();
+        }
+    }
+    /**
+     * 生成一个执行体。
+     * @param roundNum 每一 Round 执行多少任务。roundNum < 1 时表示一次性全部执行完。
+     * @param onRest Round 结束后还有剩余任务时调用
+     * @param onEnd Round 结束后没有剩余任务时调用
+     * @returns
+     */
+    produceExecuteBody(roundNum, onRest, onEnd) {
+        const excuteBody = () => {
+            if (roundNum > 0) {
+                this.runRound(roundNum);
+            }
+            else {
+                this.runAll();
+            }
+            if (!this.over) {
+                onRest(excuteBody);
+            }
+            else {
+                onEnd(this);
+            }
+        };
+        return excuteBody;
+    }
+}
+
+export { CountdownRunner, FreeList, PoolModule, RoundRunner, Shake2DModule, className, deepClone, easyEncode, emptyString, enumKeys, enumValues, getEnumName, isNull, notNull, objectValues, pick, pickWeights, pickWeightsBy, random, randomInt, randomIntArr, remap, removeNullKeys, toNumber };
