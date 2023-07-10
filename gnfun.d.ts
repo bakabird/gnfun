@@ -5,6 +5,7 @@ declare module 'gnfun' {
     export { PoolModule } from "gnfun/Module/PoolModule";
     import CountdownRunner from "gnfun/Runner/CountdownRunner";
     import RoundRunner from "gnfun/Runner/RoundRunner";
+    export { easyEncode, deepClone, remap, emptyString, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, } from "gnfun/Util";
     export { CountdownRunner };
     export { RoundRunner };
 }
@@ -230,6 +231,40 @@ declare module 'gnfun/Runner/RoundRunner' {
           */
         produceExecuteBody(roundNum: number, onRest: (excuteBody: Function) => void, onEnd: (self: RoundRunner) => void): () => void;
     }
+}
+
+declare module 'gnfun/Util' {
+    function easyEncode(src: string): string;
+    /**
+        * 获取给定对象的类名
+        * @param obj 对象
+        * @return 类型名
+        */
+    function className(obj: any): string;
+    function deepClone(data: any): any;
+    /**
+        * 判断给定字符串是否是空字符串
+        * @param str
+        */
+    function emptyString(str: string): boolean;
+    function remap(value: number, low1: number, high1: number, low2: number, high2: number): number;
+    function objectValues(obj: Record<string, any>): Array<any>;
+    function getEnumName<E>(enumType: Record<string, E>, enumVal: E): string;
+    function enumValues(enumType: Object, valType: "string"): Array<string>;
+    function enumValues(enumType: Object, valType: "number"): Array<number>;
+    function enumKeys(enumType: Record<string, any>, valType: "string" | "number"): Array<string>;
+    /**
+        * check if the given v is null or undefined
+        * @param v value to be checked
+        */
+    function isNull(v: any): boolean;
+    /**
+        * check if the given v is not null nor undefined
+        * @param v value to be checked
+        */
+    function notNull(v: any): boolean;
+    function removeNullKeys<T>(obj: T): Partial<T>;
+    export { easyEncode, deepClone, emptyString, remap, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, };
 }
 
 declare module 'gnfun/Collection/ILoopFunction' {
