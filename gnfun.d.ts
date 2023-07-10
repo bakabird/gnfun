@@ -2,6 +2,7 @@
 
 declare module 'gnfun' {
     export { FreeList } from "gnfun/Collection/FreeList";
+    export { PoolModule } from "gnfun/Module/PoolModule";
     import CountdownRunner from "gnfun/Runner/CountdownRunner";
     import RoundRunner from "gnfun/Runner/RoundRunner";
     export { CountdownRunner };
@@ -193,6 +194,14 @@ declare module 'gnfun/Collection/FreeList' {
                 */
             copyTo(dst: FreeList<T>, from?: number, len?: number): FreeList<T>;
             report(): void;
+    }
+}
+
+declare module 'gnfun/Module/PoolModule' {
+    export class PoolModule<T> {
+        constructor(_ctor: () => T, _dtor?: ((o: T) => void) | undefined);
+        alloc(): T;
+        free(o: T): void;
     }
 }
 

@@ -388,6 +388,27 @@ class FreeList {
     }
 }
 
+class PoolModule {
+    constructor(_ctor, _dtor) {
+        this._ctor = _ctor;
+        this._dtor = _dtor;
+        this._pool = [];
+    }
+    alloc() {
+        if (this._pool.length > 0) {
+            return this._pool.shift();
+        }
+        else {
+            return this._ctor();
+        }
+    }
+    free(o) {
+        var _a;
+        (_a = this._dtor) === null || _a === void 0 ? void 0 : _a.call(this, o);
+        this._pool.push(o);
+    }
+}
+
 class CountdownRunner {
     get bindedCountdown() {
         return this.countdown.bind(this);
@@ -463,4 +484,4 @@ class RoundRunner {
     }
 }
 
-export { CountdownRunner, FreeList, RoundRunner };
+export { CountdownRunner, FreeList, PoolModule, RoundRunner };
