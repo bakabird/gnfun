@@ -1,18 +1,31 @@
-const gulp = require("gulp")
+const gulp  = require("gulp")
 const ts = require('gulp-typescript');
 const rollup = require('rollup');
 const rename = require('gulp-rename')
 const uglify = require("gulp-uglify");
 const dts = require('dts-bundle');
-const tsProject = ts.createProject('tsconfig.json', { declaration: true });
 
-gulp.task('buildJs', () => {
-    return tsProject.src().pipe(tsProject()).pipe(gulp.dest('./build'));
+// import gulp from "gulp"
+// import ts from 'gulp-typescript'
+// import rollup from 'rollup'
+// import rename from 'gulp-rename'
+// import uglify from "gulp-uglify"
+// import dts from 'dts-bundle'
+
+const tsMjsProject = ts.createProject('tsconfig.json', { declaration: true });
+const tsCjsProject = ts.createProject('tsconfig-cjs.json', { declaration: true });
+
+gulp.task('buildMjs', () => {    
+    return tsMjsProject.src().pipe(tsMjsProject()).pipe(gulp.dest('./buildMjs'));
 })
 
-gulp.task("rollup", async function () {
-    let config = {
-        input: "build/main.js",
+gulp.task('buildCjs', () => {    
+    return tsCjsProject.src().pipe(tsCjsProject()).pipe(gulp.dest('./buildCjs'));
+})
+
+gulp.task("rollupMjs", async function () {
+    let mjsConfig = {
+        input: "buildMjs/main.js",
         // external: [],
         output: {
             file: `./gnfun.mjs`,
@@ -21,10 +34,24 @@ gulp.task("rollup", async function () {
             name: 'gnfun',
         },
     };
-    const subTask = await rollup.rollup(config);
-    await subTask.write(config.output);
+    const mjsTask = await rollup.rollup(mjsConfig);
+    await mjsTask.write(mjsConfig.output);
 });
 
+gulp.task("rollupCjs", async function () {
+    let cjsConfig = {
+        input: "buildMjs/main.js",
+        // external: [],
+        output: {
+            file: `./gnfun.cjs`,
+            format: 'cjs',
+            extend: true,
+            name: 'gnfun',
+        },
+    };
+    const cjsTask = await rollup.rollup(cjsConfig);
+    await cjsTask.write(cjsConfig.output);
+});
 
 //js文件打包
 gulp.task("uglify", function () {
@@ -37,14 +64,21 @@ gulp.task("uglify", function () {
 
 gulp.task('buildDts', function () {
     return new Promise(function (resolve, reject) {
-        dts.bundle({ name: "gnfun", main: "./build/main.d.ts", out: "../gnfun.d.ts" });
+        dts.bundle({ name: "gnfun", main: "./buildMjs/main.d.ts", out: "../gnfun.d.ts" });
         resolve();
     });
 })
 
 gulp.task('build', gulp.series(
-    'buildJs',
-    'rollup',
-    'uglify',
+    'buildMjs',
+    'buildCjs',
+    'rollupMjs',
+    'rollupCjs',
+    // 'uglify',
     'buildDts',
+))
+
+gulp.task('test', gulp.series(
+    'buildMjs',
+    'buildCjs',
 ))

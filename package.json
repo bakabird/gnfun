@@ -1,16 +1,21 @@
 {
   "name": "gnfun",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "gnfun = Good and Nice Functions.",
   "main": "gnfun.mjs",
   "types": "gnfun.d.ts",
+  "type": "module",
+  "exports": {
+    "import": "./gnfun.mjs",
+    "require": "./gnfun.cjs"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp build"
   },
   "files": [
     "gnfun.mjs",
-    "gnfun.min.mjs",
+    "gnfun.cjs",    
     "gnfun.d.ts"
   ],
   "repository": {
