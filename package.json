@@ -1,6 +1,6 @@
 {
   "name": "gnfun",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "gnfun = Good and Nice Functions.",
   "main": "gnfun.mjs",
   "types": "gnfun.d.ts",
@@ -15,7 +15,7 @@
   },
   "files": [
     "gnfun.mjs",
-    "gnfun.cjs",    
+    "gnfun.cjs",
     "gnfun.d.ts"
   ],
   "repository": {

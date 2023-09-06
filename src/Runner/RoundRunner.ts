@@ -8,12 +8,23 @@ export default class RoundRunner {
     constructor() {
         this._steps = new FreeList<Function>();
     }
+    /**
+     * 添加一个任务
+     * @param step 
+     */
     public append(step: Function) {
         this._steps.push(step);
     }
+    /**
+     * 反转剩余任务队列
+     */
     public reverse() {
         this._steps.unsafeReverse();
     }
+    /**
+     * 执行一轮任务
+     * @param roundNum 一轮执行多少任务
+     */
     public runRound(roundNum: number) {
         let count = 0;
         let tmp: Function;
@@ -27,6 +38,9 @@ export default class RoundRunner {
             return count < roundNum;
         });
     }
+    /**
+     * 执行所有任务
+     */
     public runAll() {
         while (this._steps.length != 0) {
             this._steps.shift()!();
@@ -37,9 +51,9 @@ export default class RoundRunner {
      * @param roundNum 每一 Round 执行多少任务。roundNum < 1 时表示一次性全部执行完。
      * @param onRest Round 结束后还有剩余任务时调用
      * @param onEnd Round 结束后没有剩余任务时调用
-     * @returns 
+     * @returns 一个执行体，调用它可以执行一轮任务，一轮结束后会调用 onRest 或 onEnd。
      */
-    public produceExecuteBody(roundNum: number, onRest: (excuteBody: Function) => void, onEnd: (self: RoundRunner) => void) {
+    public produceExecuteBody(roundNum: number, onRest: (excuteBody: Function) => void, onEnd: (self: RoundRunner) => void): () => void {
         const excuteBody = () => {
             if (roundNum > 0) {
                 this.runRound(roundNum);

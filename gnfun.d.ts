@@ -201,50 +201,108 @@ declare module 'gnfun/Collection/FreeList' {
 }
 
 declare module 'gnfun/Module/PoolModule' {
+    /**
+        * 可以被任意组合使用的对象池。
+        */
     export class PoolModule<T> {
-        constructor(_ctor: () => T, _dtor?: ((o: T) => void) | undefined);
-        alloc(): T;
-        free(o: T): void;
+            /**
+                * 创建一个对象池
+                * @param _ctor 构造新对象时执行的方法。
+                * @param _dtor 回收对象时执行的方法。
+                */
+            constructor(_ctor: () => T, _dtor?: ((o: T) => void) | undefined);
+            /**
+                * 从对象池中取出一个对象
+                * @returns 一个对象
+                */
+            alloc(): T;
+            /**
+                * 回收一个对象
+                * @param o 回收对象
+                */
+            free(o: T): void;
     }
 }
 
 declare module 'gnfun/Module/Shake2DModule' {
     type Vec2 = {
-        x: number;
-        y: number;
+            x: number;
+            y: number;
     };
     export default class Shake2DModule {
-        constructor(magnitude: number, duration: number, speed: number, shaketype: "smooth" | "smoothCircle" | "smoothHalfCircle" | "perlinNoise" | "random", RandomRange: number, onGetOriginal: () => Vec2, onShake: (v2: Vec2) => void);
-        get ratio(): number;
-        set ratio(v: number);
+            /**
+                *
+                * @param magnitude 抖动力度
+                * @param duration 抖动持续时间
+                * @param speed 抖动速度
+                * @param shaketype 抖动方式
+                * @param RandomRange 随机因子的范围
+                * @param onGetOriginal 获取抖动原点时调用
+                * @param onShake 生成新的抖动位置时调用
+                */
+            constructor(magnitude: number, duration: number, speed: number, shaketype: "smooth" | "smoothCircle" | "smoothHalfCircle" | "perlinNoise" | "random", RandomRange: number, onGetOriginal: () => Vec2, onShake: (v2: Vec2) => void);
+            /**
+                * 0 ~ 1
+                * @returns 返回当前进度
+                */
+            get ratio(): number;
+            /**
+                * 推进当前进度
+                */
+            set ratio(v: number);
     }
     export {};
 }
 
 declare module 'gnfun/Runner/CountdownRunner' {
     export default class CountdownRunner {
-        get bindedCountdown(): () => void;
-        constructor(_countdown: number, _run: Function | undefined);
-        countdown(): void;
+            /**
+                * bind 了 CountdownRunner 自己的 countdown 方法。
+                */
+            get bindedCountdown(): () => void;
+            /**
+                *
+                * @param _countdown 倒数次数
+                * @param _run 倒数到 0 时执行的方法
+                */
+            constructor(_countdown: number, _run: Function | undefined);
+            /**
+                * 倒数一次，如果倒数到 0 则执行 run 方法。
+                */
+            countdown(): void;
     }
 }
 
 declare module 'gnfun/Runner/RoundRunner' {
     export default class RoundRunner {
-        get over(): boolean;
-        constructor();
-        append(step: Function): void;
-        reverse(): void;
-        runRound(roundNum: number): void;
-        runAll(): void;
-        /**
-          * 生成一个执行体。
-          * @param roundNum 每一 Round 执行多少任务。roundNum < 1 时表示一次性全部执行完。
-          * @param onRest Round 结束后还有剩余任务时调用
-          * @param onEnd Round 结束后没有剩余任务时调用
-          * @returns
-          */
-        produceExecuteBody(roundNum: number, onRest: (excuteBody: Function) => void, onEnd: (self: RoundRunner) => void): () => void;
+            get over(): boolean;
+            constructor();
+            /**
+                * 添加一个任务
+                * @param step
+                */
+            append(step: Function): void;
+            /**
+                * 反转剩余任务队列
+                */
+            reverse(): void;
+            /**
+                * 执行一轮任务
+                * @param roundNum 一轮执行多少任务
+                */
+            runRound(roundNum: number): void;
+            /**
+                * 执行所有任务
+                */
+            runAll(): void;
+            /**
+                * 生成一个执行体。
+                * @param roundNum 每一 Round 执行多少任务。roundNum < 1 时表示一次性全部执行完。
+                * @param onRest Round 结束后还有剩余任务时调用
+                * @param onEnd Round 结束后没有剩余任务时调用
+                * @returns 一个执行体，调用它可以执行一轮任务，一轮结束后会调用 onRest 或 onEnd。
+                */
+            produceExecuteBody(roundNum: number, onRest: (excuteBody: Function) => void, onEnd: (self: RoundRunner) => void): () => void;
     }
 }
 

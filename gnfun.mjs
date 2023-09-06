@@ -388,12 +388,24 @@ class FreeList {
     }
 }
 
+/**
+ * 可以被任意组合使用的对象池。
+ */
 class PoolModule {
+    /**
+     * 创建一个对象池
+     * @param _ctor 构造新对象时执行的方法。
+     * @param _dtor 回收对象时执行的方法。
+     */
     constructor(_ctor, _dtor) {
         this._ctor = _ctor;
         this._dtor = _dtor;
         this._pool = [];
     }
+    /**
+     * 从对象池中取出一个对象
+     * @returns 一个对象
+     */
     alloc() {
         if (this._pool.length > 0) {
             return this._pool.shift();
@@ -402,6 +414,10 @@ class PoolModule {
             return this._ctor();
         }
     }
+    /**
+     * 回收一个对象
+     * @param o 回收对象
+     */
     free(o) {
         var _a;
         (_a = this._dtor) === null || _a === void 0 ? void 0 : _a.call(this, o);
@@ -711,6 +727,16 @@ function arrayIncludes(arr, item) {
 }
 
 class Shake2DModule {
+    /**
+     *
+     * @param magnitude 抖动力度
+     * @param duration 抖动持续时间
+     * @param speed 抖动速度
+     * @param shaketype 抖动方式
+     * @param RandomRange 随机因子的范围
+     * @param onGetOriginal 获取抖动原点时调用
+     * @param onShake 生成新的抖动位置时调用
+     */
     constructor(magnitude, duration, speed, shaketype, RandomRange, onGetOriginal, onShake) {
         this.magnitude = magnitude;
         this.duration = duration;
@@ -724,9 +750,16 @@ class Shake2DModule {
         this._random1 = random(-this.RandomRange, this.RandomRange);
         this._random2 = random(-this.RandomRange, this.RandomRange);
     }
+    /**
+     * 0 ~ 1
+     * @returns 返回当前进度
+     */
     get ratio() {
         return this._ratio;
     }
+    /**
+     * 推进当前进度
+     */
     set ratio(v) {
         const time = v * this.duration;
         if (time > this.duration)
@@ -795,13 +828,24 @@ class Shake2DModule {
 }
 
 class CountdownRunner {
+    /**
+     * bind 了 CountdownRunner 自己的 countdown 方法。
+     */
     get bindedCountdown() {
         return this.countdown.bind(this);
     }
+    /**
+     *
+     * @param _countdown 倒数次数
+     * @param _run 倒数到 0 时执行的方法
+     */
     constructor(_countdown, _run) {
         this._countdown = _countdown;
         this._run = _run;
     }
+    /**
+     * 倒数一次，如果倒数到 0 则执行 run 方法。
+     */
     countdown() {
         var _a;
         this._countdown -= 1;
@@ -819,12 +863,23 @@ class RoundRunner {
     constructor() {
         this._steps = new FreeList();
     }
+    /**
+     * 添加一个任务
+     * @param step
+     */
     append(step) {
         this._steps.push(step);
     }
+    /**
+     * 反转剩余任务队列
+     */
     reverse() {
         this._steps.unsafeReverse();
     }
+    /**
+     * 执行一轮任务
+     * @param roundNum 一轮执行多少任务
+     */
     runRound(roundNum) {
         let count = 0;
         let tmp;
@@ -838,6 +893,9 @@ class RoundRunner {
             return count < roundNum;
         });
     }
+    /**
+     * 执行所有任务
+     */
     runAll() {
         while (this._steps.length != 0) {
             this._steps.shift()();
@@ -848,7 +906,7 @@ class RoundRunner {
      * @param roundNum 每一 Round 执行多少任务。roundNum < 1 时表示一次性全部执行完。
      * @param onRest Round 结束后还有剩余任务时调用
      * @param onEnd Round 结束后没有剩余任务时调用
-     * @returns
+     * @returns 一个执行体，调用它可以执行一轮任务，一轮结束后会调用 onRest 或 onEnd。
      */
     produceExecuteBody(roundNum, onRest, onEnd) {
         const excuteBody = () => {

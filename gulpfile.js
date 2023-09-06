@@ -1,25 +1,25 @@
-const gulp  = require("gulp")
-const ts = require('gulp-typescript');
-const rollup = require('rollup');
-const rename = require('gulp-rename')
-const uglify = require("gulp-uglify");
-const dts = require('dts-bundle');
+// const gulp  = require("gulp")
+// const ts = require('gulp-typescript');
+// const rollup = require('rollup');
+// const rename = require('gulp-rename')
+// const uglify = require("gulp-uglify");
+// const dts = require('dts-bundle');
 
-// import gulp from "gulp"
-// import ts from 'gulp-typescript'
-// import rollup from 'rollup'
-// import rename from 'gulp-rename'
-// import uglify from "gulp-uglify"
-// import dts from 'dts-bundle'
+import gulp from "gulp"
+import ts from 'gulp-typescript'
+import * as rollup from 'rollup'
+import rename from 'gulp-rename'
+import uglify from "gulp-uglify"
+import dts from 'dts-bundle'
 
 const tsMjsProject = ts.createProject('tsconfig.json', { declaration: true });
 const tsCjsProject = ts.createProject('tsconfig-cjs.json', { declaration: true });
 
-gulp.task('buildMjs', () => {    
+gulp.task('buildMjs', () => {
     return tsMjsProject.src().pipe(tsMjsProject()).pipe(gulp.dest('./buildMjs'));
 })
 
-gulp.task('buildCjs', () => {    
+gulp.task('buildCjs', () => {
     return tsCjsProject.src().pipe(tsCjsProject()).pipe(gulp.dest('./buildCjs'));
 })
 

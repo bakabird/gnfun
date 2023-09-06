@@ -10,6 +10,16 @@ export default class Shake2DModule {
     private _ratio: number;
     private _time: number;
 
+    /**
+     * 
+     * @param magnitude 抖动力度
+     * @param duration 抖动持续时间
+     * @param speed 抖动速度
+     * @param shaketype 抖动方式
+     * @param RandomRange 随机因子的范围
+     * @param onGetOriginal 获取抖动原点时调用
+     * @param onShake 生成新的抖动位置时调用
+     */
     constructor(
         private magnitude: number,
         private duration: number,
@@ -25,10 +35,17 @@ export default class Shake2DModule {
         this._random2 = random(-this.RandomRange, this.RandomRange);
     }
 
+    /**
+     * 0 ~ 1
+     * @returns 返回当前进度
+     */
     public get ratio(): number {
         return this._ratio;
     }
 
+    /**
+     * 推进当前进度
+     */
     public set ratio(v: number) {
         const time = v * this.duration;
         if (time > this.duration) return;
