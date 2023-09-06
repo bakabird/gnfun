@@ -6,9 +6,11 @@ declare module 'gnfun' {
     import Shake2DModule from "gnfun/Module/Shake2DModule";
     import CountdownRunner from "gnfun/Runner/CountdownRunner";
     import RoundRunner from "gnfun/Runner/RoundRunner";
+    import AsyncRunner from "gnfun/Runner/AsyncRunner";
     export { easyEncode, deepClone, remap, emptyString, objectValues, getEnumName, enumValues, enumKeys, className, isNull, notNull, removeNullKeys, toNumber, random, randomInt, randomIntArr, pick, pickWeights, pickWeightsBy, arrayFindIndexAll, arrayIncludes, arrayRemove, arrayRemoveAll, arrayRemoveFirst, } from "gnfun/Util";
     export { CountdownRunner };
     export { RoundRunner };
+    export { AsyncRunner };
     export { Shake2DModule };
 }
 
@@ -304,6 +306,35 @@ declare module 'gnfun/Runner/RoundRunner' {
                 */
             produceExecuteBody(roundNum: number, onRest: (excuteBody: Function) => void, onEnd: (self: RoundRunner) => void): () => void;
     }
+}
+
+declare module 'gnfun/Runner/AsyncRunner' {
+    enum StepStatu {
+            Idle = 0,
+            Pending = 1,
+            Stop = 2,
+            Fulfilled = 3
+    }
+    type Step = (call: () => void) => void;
+    export default class AsyncRunner {
+            statu: StepStatu;
+            constructor();
+            /**
+                * 在队列末尾添加一个步骤
+                * @param step 可以是一个步骤，也可以是一个步骤数组。如果是步骤数组，那么这些步骤会并行执行，并且这些步骤全都结束后，才会执行下一个步骤。
+                */
+            Then(step: Step | Step[]): void;
+            /**
+                * 开始执行队列中的步骤
+                * @param complete 所有步骤执行完毕后调用
+                */
+            Start(complete: () => void): void;
+            /**
+                * 停止执行队列中的步骤
+                */
+            Stop(): void;
+    }
+    export {};
 }
 
 declare module 'gnfun/Util' {
