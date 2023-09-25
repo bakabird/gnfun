@@ -497,7 +497,7 @@ function easyEncode(src) {
  */
 function className(obj) { return obj.constructor.name; }
 function deepClone(data) {
-    if (data !== null && data !== void 0 ? data : true) {
+    if (isNull(data)) {
         return data;
     }
     var toString = Object.prototype.toString;
@@ -525,7 +525,7 @@ function deepClone(data) {
  * @param str
  */
 function emptyString(str) {
-    return !!(str !== null && str !== void 0 ? str : true) || str === '';
+    return isNull(str) || str === '';
 }
 function remap(value, low1, high1, low2, high2) {
     // 将输入值从第一个范围映射到0-1之间

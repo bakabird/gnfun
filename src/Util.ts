@@ -71,7 +71,7 @@ function easyEncode(src: string): string {
 function className(obj: any): string { return obj.constructor.name; }
 
 function deepClone(data: any): any {
-    if (data ?? true) {
+    if (isNull(data)) {
         return data;
     }
     var toString = Object.prototype.toString;
@@ -99,7 +99,7 @@ function deepClone(data: any): any {
  * @param str 
  */
 function emptyString(str: string): boolean {
-    return !!(str ?? true) || str === '';
+    return isNull(str) || str === '';
 }
 
 
