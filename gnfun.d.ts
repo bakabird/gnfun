@@ -268,6 +268,7 @@ declare module 'gnfun/Runner/CountdownRunner' {
                 * @param _run 倒数到 0 时执行的方法
                 */
             constructor(_countdown: number, _run: Function | undefined);
+            inc(): void;
             /**
                 * 倒数一次，如果倒数到 0 则执行 run 方法。
                 */

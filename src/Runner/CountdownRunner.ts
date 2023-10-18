@@ -14,6 +14,10 @@ export default class CountdownRunner {
     constructor(private _countdown: number, private _run: Function | undefined) {
     }
 
+    public inc() {
+        this._countdown += 1;
+    }
+
     /**
      * 倒数一次，如果倒数到 0 则执行 run 方法。
      */

@@ -845,6 +845,9 @@ class CountdownRunner {
         this._countdown = _countdown;
         this._run = _run;
     }
+    inc() {
+        this._countdown += 1;
+    }
     /**
      * 倒数一次，如果倒数到 0 则执行 run 方法。
      */
